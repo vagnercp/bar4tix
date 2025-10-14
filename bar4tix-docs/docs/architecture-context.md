@@ -1,31 +1,31 @@
 flowchart LR
-  %% --- CONTEXTO (alto nível) ---
+  %% CONTEXTO (alto nivel)
 
-  subgraph USERS[Users]
-    U1[Consumidor App · Web]
-    U2[Lojista · Analista (BI)]
+  subgraph USERS [Users]
+    U1["Consumidor App / Web"]
+    U2["Lojista e Analista (BI)"]
   end
 
-  U1 -->|QR NFC-e · Busca| GW[API Gateway]
-  U2 -->|Dashboards · Export| GW
+  U1 -->|QR NFC-e e Busca| GW["API Gateway"]
+  U2 -->|Dashboards e Export| GW
 
-  GW --> BFF[Comparison · BFF]
-  GW --> BI[BI Service]
-  GW --> ID[Identity]
+  GW --> BFF["Comparison / BFF"]
+  GW --> BI["BI Service"]
+  GW --> ID["Identity"]
 
-  BFF --> PRC[Pricing Service]
-  BFF --> CAT[Catalog Service]
-  BFF --> PLC[Places Service]
+  BFF --> PRC["Pricing Service"]
+  BFF --> CAT["Catalog Service"]
+  BFF --> PLC["Places Service"]
 
-  subgraph DATA[Data & Storage]
-    DB[(PostgreSQL)]
-    RD[(Redis Cache)]
-    KF[(Kafka Topics)]
-    OBJ[(Object Storage)]
+  subgraph DATA [Data & Storage]
+    DB[("PostgreSQL")]
+    RD[("Redis Cache")]
+    KF[("Kafka Topics")]
+    OBJ[("Object Storage")]
   end
 
-  INJ[Ingestion] --> KF
-  OCR[OCR · Crawler] --> INJ
+  INJ["Ingestion"] --> KF
+  OCR["OCR / Crawler"] --> INJ
   INJ --> CAT
   INJ --> PRC
 
@@ -34,8 +34,3 @@ flowchart LR
   PRC --> RD
   BI --> DB
   BI --> OBJ
-
-  %% estilos simples compatíveis com GitHub
-  classDef comp fill:#f6f8fa,stroke:#999,color:#111;
-  class GW,BFF,BI,ID,PRC,CAT,PLC,INJ,OCR comp;
-  class DB,RD,KF,OBJ comp;
