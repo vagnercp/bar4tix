@@ -168,3 +168,63 @@ Jobs OCR e crawler como CronJobs.
 **Versão:** 1.0  
 **Licença:** CC-BY-NC-SA 4.0
 
+## 🧩 Diagrama
+
+```mermaid
+flowchart LR
+%% estilos
+classDef edge fill:#fff,stroke:#0ea5e9,color:#000;
+classDef core fill:#fff,stroke:#4ade80,color:#000;
+classDef db fill:#fff,stroke:#60a5fa,color:#000;
+classDef worker fill:#fff,stroke:#f59e0b,color:#000;
+classDef ext fill:#fff,stroke:#94a3b8,color:#000;
+
+    subgraph Edge["Gateway"]
+        GW["API Gateway\nSpring Cloud Gateway\nOIDC + Roteamento"]
+    end
+    class GW edge
+
+    subgraph Client["Clientes"]
+        APP["App / Web\n(HTTP)"]
+    end
+    class APP ext
+
+    subgraph Core["Core Services (ClusterIP)"]
+        BFF["BFF App\n(vapp.*)"]
+        IDP["identity-service\n(idp.*)"]
+        PROF["profile-service\n(prof.*)"]
+        CAT["catalog-service\n(catalog.*)"]
+        PLC["places-service\n(places.*)"]
+        EVT["events-service\n(evt.*)"]
+    end
+    class BFF,IDP,PROF,CAT,PLC,EVT core
+
+    subgraph Async["Assíncrono"]
+        PUB["outbox-publisher\n(Deployment/Cron)"]
+        WR1["place-resolver-worker"]
+        WR2["bi-sink-worker"]
+    end
+    class PUB,WR1,WR2 worker
+
+    DB[("PostgreSQL\nSchemas: idp, prof, catalog, places, evt, vapp, bi, doc")]
+    BUS[("(Kafka / Broker)\n(opcional/futuro)")]
+    class DB db
+    class BUS db
+
+    APP --> GW --> BFF
+    BFF --> IDP & PROF & CAT & PLC & EVT
+    IDP --- DB
+    PROF --- DB
+    CAT --- DB
+    PLC --- DB
+    EVT --- DB
+    BFF --- DB
+    EVT --> PUB
+    PUB --> BUS
+    BUS --> WR1
+    BUS --> WR2
+    WR1 --- DB
+    WR2 --- DB
+	style BUS fill:#C1FF72
+	style DB color:#000000,fill:#5CE1E6
+```
