@@ -1,4 +1,4 @@
-# 👥 Personas & Jornadas — Bar4tix (v0.3)
+# 👥 Personas & Jornadas — Bar4tix (v0.1)
 
 ## 🧭 Propósito
 
