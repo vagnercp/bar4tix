@@ -53,4 +53,3 @@ F3 -.-> A1
 
 style F2 fill:#ffe6cc,stroke:#ff6600,stroke-width:2px
 style F3 fill:#ffd699,stroke:#ff6600,stroke-width:1px
-
