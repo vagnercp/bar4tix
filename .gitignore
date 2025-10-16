@@ -1,0 +1,130 @@
+################################################################################
+# Bar4tix — .gitignore
+# Compatível com: Java 21, Kotlin, Gradle 9, Spring Boot 3.5+, IntelliJ IDEA
+################################################################################
+
+### Build & IDEs ###
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+!.gradle/versions.gradle.properties
+
+### IntelliJ IDEA / JetBrains ###
+.idea/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+.idea/**/httpRequests/
+.idea/**/dataSources*
+.idea/**/sonarlint/
+.idea/**/externalDependencies.xml
+.idea/**/jarRepositories.xml
+.idea/**/runConfigurations/
+
+### VSCode ###
+.vscode/
+*.code-workspace
+
+### Project Artifacts ###
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.log
+*.pid
+*.out
+*.seed
+*.tmp
+*.bak
+
+### OS & Metadata ###
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+Icon?
+__MACOSX/
+
+### Gradle cache / test kits ###
+.gradle-test-kit/
+.gradle-local/
+gradle-app.setting
+gradle-app.properties
+gradle-wrapper.properties.lock
+
+### Maven (caso algum módulo use) ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+### Testing & Coverage ###
+test-output/
+jacoco.exec
+coverage/
+reports/
+build/reports/
+
+### Docker & Infra ###
+infra/.env
+infra/.env.*
+infra/volumes/
+infra/tmp/
+infra/logs/
+infra/flyway/conf/*.conf~
+infra/flyway/env/*.conf~
+infra/migrations/**/checksum
+docker-compose.override.yml
+docker-compose.local.yml
+.env
+.env.*
+
+### Flyway ###
+flyway/sql/**/checksum
+flyway/conf/*.conf~
+flyway/env/*.conf~
+flyway/*.log
+
+### Logs ###
+logs/
+log/
+*/logs/
+*/log/
+
+### SonarQube ###
+.sonar/
+.sonarlint/
+sonar-report.json
+
+### Kotlin ###
+*.kotlin_metadata
+*.kotlin_module
+
+### Testcontainers ###
+testcontainers.properties
+
+### Temp / Editor ###
+*.orig
+*.rej
+*.swp
+*~
+*.lock
+
+### Security ###
+# Evitar chaves e segredos locais
+*.key
+*.pem
+*.crt
+*.csr
+secrets/
+secret.*
+config/local-*.yml
+config/application-local.yml
+application-local.yml

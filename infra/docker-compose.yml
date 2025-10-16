@@ -1,0 +1,180 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: bar4tix_postgres
+    environment:
+      POSTGRES_DB: bar4tix
+      POSTGRES_USER: bar4tix
+      POSTGRES_PASSWORD: bar4tix
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bar4tix} -d ${POSTGRES_DB:-bar4tix} -h 127.0.0.1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # 0) Infra (V0.*)
+  flyway-infra:
+    image: flyway/flyway:10
+    container_name: flyway_infra
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/flyway/sql:ro
+      - ./flyway:/flyway/conf:ro
+    env_file:
+      - ./flyway/env/dev.conf
+    command: >
+      -locations=filesystem:/flyway/sql/00_infra
+      -defaultSchema=public
+      -baselineOnMigrate=true
+      migrate
+    restart: "no"
+    profiles: ["migrations"]
+
+  # 1) Catalog — histórico em catalog.flyway_schema_history
+  flyway-catalog:
+    image: flyway/flyway:10
+    container_name: flyway_catalog
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway-infra:
+        condition: service_completed_successfully
+    volumes:
+      - ./migrations:/flyway/sql:ro
+      - ./flyway:/flyway/conf:ro
+    env_file:
+      - ./flyway/env/dev.conf
+    command: >
+      -locations=filesystem:/flyway/sql/catalog/db
+      -defaultSchema=catalog
+      -schemas=catalog
+      -table=flyway_schema_history
+      -baselineOnMigrate=true
+      migrate
+    restart: "no"
+    profiles: ["migrations"]
+  # 2) Events
+  flyway-events:
+    image: flyway/flyway:10
+    container_name: flyway_events
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway-infra:
+        condition: service_completed_successfully
+    volumes:
+      - ./migrations:/flyway/sql:ro
+      - ./flyway:/flyway/conf:ro
+    env_file:
+      - ./flyway/env/dev.conf
+    command: >
+      -locations=filesystem:/flyway/sql/events/db
+      -defaultSchema=evt
+      -schemas=evt
+      -table=flyway_schema_history
+      -baselineOnMigrate=true
+      migrate
+    restart: "no"
+    profiles: [ "migrations" ]
+
+  # 3) idp
+  flyway-idp:
+    image: flyway/flyway:10
+    container_name: flyway_idp
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway-infra:
+        condition: service_completed_successfully
+    volumes:
+      - ./migrations:/flyway/sql:ro
+      - ./flyway:/flyway/conf:ro
+    env_file:
+      - ./flyway/env/dev.conf
+    command: >
+      -locations=filesystem:/flyway/sql/idp/db
+      -defaultSchema=idp
+      -schemas=idp
+      -table=flyway_schema_history
+      -baselineOnMigrate=true
+      migrate
+    restart: "no"
+    profiles: [ "migrations" ]
+
+  # 4) Places
+  flyway-places:
+    image: flyway/flyway:10
+    container_name: flyway_places
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway-infra:
+        condition: service_completed_successfully
+    volumes:
+      - ./migrations:/flyway/sql:ro
+      - ./flyway:/flyway/conf:ro
+    env_file:
+      - ./flyway/env/dev.conf
+    command: >
+      -locations=filesystem:/flyway/sql/places/db
+      -defaultSchema=places
+      -schemas=places
+      -table=flyway_schema_history
+      -baselineOnMigrate=true
+      migrate
+    restart: "no"
+    profiles: ["migrations"]
+
+  # 5) prof
+  flyway-prof:
+    image: flyway/flyway:10
+    container_name: flyway_prof
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway-infra:
+        condition: service_completed_successfully
+    volumes:
+      - ./migrations:/flyway/sql:ro
+      - ./flyway:/flyway/conf:ro
+    env_file:
+      - ./flyway/env/dev.conf
+    command: >
+      -locations=filesystem:/flyway/sql/prof/db
+      -defaultSchema=prof
+      -schemas=prof
+      -table=flyway_schema_history
+      -baselineOnMigrate=true
+      migrate
+    restart: "no"
+    profiles: ["migrations"]
+
+  # 6) vapp
+  flyway-vapp:
+    image: flyway/flyway:10
+    container_name: flyway_vapp
+    depends_on:
+      postgres:
+        condition: service_healthy
+      flyway-infra:
+        condition: service_completed_successfully
+    volumes:
+      - ./migrations:/flyway/sql:ro
+      - ./flyway:/flyway/conf:ro
+    env_file:
+      - ./flyway/env/dev.conf
+    command: >
+      -locations=filesystem:/flyway/sql/vapp/db
+      -defaultSchema=vapp
+      -schemas=vapp
+      -table=flyway_schema_history
+      -baselineOnMigrate=true
+      migrate
+    restart: "no"
+    profiles: [ "migrations" ]

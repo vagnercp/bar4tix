@@ -1,0 +1,12 @@
+
+[versions]
+kotlin = "1.9.24"
+springboot = "3.3.3"
+springdep = "1.1.6"
+ktlint = "11.6.0"
+
+[libraries]
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-starter-actuator = { module = "org.springframework.boot:spring-boot-starter-actuator" }
+jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }

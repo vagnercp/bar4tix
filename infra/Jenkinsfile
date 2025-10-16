@@ -1,0 +1,53 @@
+pipeline {
+  agent any
+  environment {
+    FLYWAY_USER = credentials('pg_user')
+    FLYWAY_PASSWORD = credentials('pg_pass')
+  }
+  parameters {
+    choice(name: 'ENV', choices: ['dev','stg','prd'], description: 'Ambiente')
+    booleanParam(name: 'REPAIR', defaultValue: false, description: 'Executar flyway repair')
+  }
+  stages {
+    stage('Prepare conf') {
+      steps { sh 'cp infra/flyway/env/${ENV}.conf flyway.env' }
+    }
+    stage('Flyway repair') {
+      when { expression { return params.REPAIR } }
+      steps {
+        sh '''
+          docker run --rm --network host \
+            --env-file flyway.env \
+            -v $PWD/infra/migrations:/flyway/sql:ro \
+            -v $PWD/infra/flyway:/flyway/conf:ro \
+            flyway/flyway:10 repair
+        '''
+      }
+    }
+    stage('Migrate') {
+      steps {
+        sh '''
+          docker run --rm --network host \
+            --env-file flyway.env \
+            -v $PWD/infra/migrations:/flyway/sql:ro \
+            -v $PWD/infra/flyway:/flyway/conf:ro \
+            flyway/flyway:10 \
+            -locations=filesystem:/flyway/sql/00_infra,filesystem:/flyway/sql/catalog/db,filesystem:/flyway/sql/places/db,filesystem:/flyway/sql/events/db,filesystem:/flyway/sql/idp/db,filesystem:/flyway/sql/prof/db,filesystem:/flyway/sql/vapp/db \
+            -baselineOnMigrate=true \
+            migrate
+        '''
+      }
+    }
+    stage('Info') {
+      steps {
+        sh '''
+          docker run --rm --network host \
+            --env-file flyway.env \
+            -v $PWD/infra/migrations:/flyway/sql:ro \
+            -v $PWD/infra/flyway:/flyway/conf:ro \
+            flyway/flyway:10 info
+        '''
+      }
+    }
+  }
+}
